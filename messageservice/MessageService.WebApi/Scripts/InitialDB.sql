@@ -1,0 +1,57 @@
+﻿SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Messages](
+	[MessageID] [int] IDENTITY(1,1) NOT NULL,
+	[MessageUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL,
+	[TenantUID] [uniqueidentifier] NOT NULL,
+	[Deleted] [bit] NOT NULL,
+	[MessageText] [nvarchar](MAX) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[MessageID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+CREATE NONCLUSTERED INDEX [IX_Messages_TenantUID] ON [dbo].[Messages]
+(
+	[TenantUID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+
+CREATE UNIQUE NONCLUSTERED INDEX [IX_Unique_MessageUID] ON [dbo].[Messages]
+(
+	[MessageUID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[Messages] ADD  CONSTRAINT [DF_Messages_MessageUID]  DEFAULT (newid()) FOR [MessageUID]
+GO
+
+CREATE SCHEMA [Security]
+GO
+
+CREATE FUNCTION [Security].[SecurityPredicate](@TenantUID UNIQUEIDENTIFIER)
+    RETURNS TABLE
+    WITH SCHEMABINDING
+AS
+    RETURN
+        SELECT 1 AS Result
+    WHERE CAST(SESSION_CONTEXT(N'TenantUID') AS UNIQUEIDENTIFIER) = @TenantUID
+GO
+
+CREATE SECURITY POLICY [Security].[MessagesPolicy]
+    ADD FILTER PREDICATE [Security].[SecurityPredicate]([TenantUID]) 
+        ON [dbo].[Messages],
+    ADD BLOCK PREDICATE [Security].[SecurityPredicate]([TenantUID]) 
+        ON [dbo].[Messages] AFTER INSERT,
+    ADD BLOCK PREDICATE [Security].[SecurityPredicate]([TenantUID]) 
+        ON [dbo].[Messages] AFTER UPDATE,
+    ADD BLOCK PREDICATE [Security].[SecurityPredicate]([TenantUID]) 
+        ON [dbo].[Messages] BEFORE DELETE,
+    ADD BLOCK PREDICATE [Security].[SecurityPredicate]([TenantUID]) 
+        ON [dbo].[Messages] BEFORE UPDATE
+WITH (STATE = ON, SCHEMABINDING = ON)
+GO
