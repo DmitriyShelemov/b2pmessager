@@ -25,6 +25,7 @@ builder.Services.AddTransient<IGenericRepository<MessageDto>, MessageRepository>
 builder.Services.AddSingleton(typeof(ISqlGenerator<>), typeof(SqlGenerator<>));
 
 string dbConnectionString = builder.Configuration.GetConnectionString("SqlConnection");
+EnsureDatabase.For.SqlDatabase(dbConnectionString);
 var upgrader =
      DeployChanges.To
           .SqlDatabase(dbConnectionString)
@@ -96,13 +97,13 @@ builder.Services.AddSwaggerGen(c =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthentication();

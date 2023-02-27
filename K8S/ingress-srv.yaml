@@ -7,21 +7,14 @@ metadata:
     nginx.ingress.kubernetes.io/use-regex: 'true'
 spec:
   rules:
-    - host: acme.com
+    - host: b2pmessager.com
       http:
         paths:
-          - path: /api/platforms
+          - path: /api/messagewebapi
             pathType: Prefix
             backend:
               service:
-                name: platforms-clusterip-srv
-                port:
-                  number: 80
-          - path: /api/c/platforms
-            pathType: Prefix
-            backend:
-              service:
-                name: commands-clusterip-srv
+                name: message-clusterip-srv
                 port:
                   number: 80
 
