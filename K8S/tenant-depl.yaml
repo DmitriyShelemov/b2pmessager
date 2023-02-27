@@ -1,31 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: commands-depl
+  name: tenant-depl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: commandservice
+      app: tenantservice
   template:
     metadata:
       labels:
-        app: commandservice
+        app: tenantservice
     spec:
       containers:
-        - name: commandservice
-          image: binarythistle/commandservice:latest
+        - name: tenantservice
+          image: binarythistle/tenantservice:latest
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: commands-clusterip-srv
+  name: tenant-clusterip-srv
 spec:
   type: ClusterIP
   selector:
-    app: commandservice
+    app: tenantservice
   ports:
-  - name: commandservice
+  - name: tenantservice
     protocol: TCP
     port: 80
     targetPort: 80 

@@ -1,31 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: platforms-depl
+  name: message-depl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: platformservice
+      app: messageservice
   template:
     metadata:
       labels:
-        app: platformservice
+        app: messageservice
     spec:
       containers:
-        - name: platformservice
-          image: binarythistle/platformservice:latest
+        - name: messageservice
+          image: dmitryshv/messageservice:latest
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: platforms-clusterip-srv
+  name: message-clusterip-srv
 spec:
   type: ClusterIP
   selector:
-    app: platformservice
+    app: messageservice
   ports:
-  - name: platformservice
+  - name: messageservice
     protocol: TCP
     port: 80
     targetPort: 80

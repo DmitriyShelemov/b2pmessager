@@ -1,8 +1,10 @@
+using DbUp;
 using FluentValidation;
 using MessageService.WebApi.Dto;
 using MessageService.WebApi.Services;
 using MessageService.WebApi.Services.Interfaces;
 using MessageService.WebApi.Validators;
+using MicroOrm.Dapper.Repositories.SqlGenerator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Data.SqlClient;
@@ -10,6 +12,7 @@ using Microsoft.OpenApi.Models;
 using PerspectProperty.Application.Services;
 using System.Data;
 using System.Net.Mime;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,8 +22,24 @@ builder.Services.AddTransient<IValidator<MessageCreateDto>, MessageCreateDtoVali
 builder.Services.AddTransient<ITenantResolver, TenantResolver>();
 builder.Services.AddTransient<IMessageService, MessageService.WebApi.Services.MessageService>();
 builder.Services.AddTransient<IGenericRepository<MessageDto>, MessageRepository>();
+builder.Services.AddSingleton(typeof(ISqlGenerator<>), typeof(SqlGenerator<>));
 
 string dbConnectionString = builder.Configuration.GetConnectionString("SqlConnection");
+var upgrader =
+     DeployChanges.To
+          .SqlDatabase(dbConnectionString)
+          .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
+          .WithTransactionPerScript()
+          .LogToConsole()
+          .Build();
+
+var result = upgrader.PerformUpgrade();
+if (!result.Successful)
+{
+    Console.WriteLine(result.Error.ToString());
+}
+
+
 builder.Services.AddTransient<IDbConnection>((sp) => {
     var conn = new SqlConnection(dbConnectionString);
     var contextAccessor = sp.GetService<IHttpContextAccessor>();
@@ -38,7 +57,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.IncludeXmlComments(string.Format(@"{0}\MessageService.WebApi.xml", System.AppDomain.CurrentDomain.BaseDirectory));
+    //c.IncludeXmlComments(string.Format(@"{0}\MessageService.WebApi.xml", System.AppDomain.CurrentDomain.BaseDirectory));
     c.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
