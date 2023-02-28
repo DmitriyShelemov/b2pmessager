@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace MessageService.WebApi.Entities
+namespace messageservice.Entities
 {
     [Table("Messages")]
     public class Message
@@ -13,6 +13,8 @@ namespace MessageService.WebApi.Entities
         public int MessageID { get; set; }
 
         public virtual Guid MessageUID { get; set; }
+
+        public virtual Guid ChatUID { get; set; }
 
         [JsonIgnore]
         public Guid TenantUID { get; set; }

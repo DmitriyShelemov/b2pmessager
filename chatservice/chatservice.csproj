@@ -31,10 +31,4 @@
     <Folder Include="Infrastructure\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="MessageService.WebApi.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

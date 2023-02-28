@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MessageService.WebApi.Controllers
+namespace messageservice.Controllers
 {
 	[Route(TenantRoute + "[controller]")]
 	[ApiController]
-	[Authorize]
+	//[Authorize]
 	public abstract class BaseTenantController : ControllerBase
 	{
 		public const string TenantRoute = "/api/Tenant/{tenantUID}/";

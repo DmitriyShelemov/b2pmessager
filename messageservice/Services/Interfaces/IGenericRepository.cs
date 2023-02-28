@@ -1,14 +1,12 @@
-﻿using MessageService.WebApi.Dto;
+﻿using messageservice.Dto;
 
-namespace MessageService.WebApi.Services.Interfaces
+namespace messageservice.Services.Interfaces
 {
     public interface IGenericRepository<T> where T : class
     {
         Task<T> GetByIdAsync(Guid id);
 
-        Task<IEnumerable<T>> GetAllAsync(PageOptionsDto opts);
-
-        Task<IEnumerable<T>> GetAllAsync(int parentId, PageOptionsDto opts);
+        Task<IEnumerable<T>> GetAllAsync(Guid parentId, PageOptionsDto opts);
 
         Task<bool> AddAsync(T entity);
 

@@ -1,7 +1,7 @@
-﻿using MessageService.WebApi.Dto;
-using MessageService.WebApi.Services.Interfaces;
+﻿using messageservice.Dto;
+using messageservice.Services.Interfaces;
 
-namespace MessageService.WebApi.Services
+namespace messageservice.Services
 {
     public class MessageService : IMessageService
     {
@@ -16,12 +16,12 @@ namespace MessageService.WebApi.Services
             _tenantResolver = tenantResolver;
         }
 
-        public async Task<IEnumerable<MessageDto>> GetAllAsync(PageOptionsDto opts)
+        public async Task<IEnumerable<MessageDto>> GetAllAsync(Guid parentId, PageOptionsDto opts)
         {
             //    if (!await _context.CanReadBaccountAsync())
             //        throw new UnauthorizedAccessException();
 
-            return await _repository.GetAllAsync(opts);
+            return await _repository.GetAllAsync(parentId, opts);
         }
 
         public async Task<bool> AddAsync(MessageCreateDto entity)
@@ -39,7 +39,7 @@ namespace MessageService.WebApi.Services
             return await _repository.AddAsync(entity);
         }
 
-        public async Task<bool> UpdateAsync(MessageCreateDto entity)
+        public async Task<bool> UpdateAsync(MessageUpdateDto entity)
         {
             if (entity == null)
             {

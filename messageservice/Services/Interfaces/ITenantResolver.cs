@@ -1,4 +1,4 @@
-﻿namespace MessageService.WebApi.Services.Interfaces
+﻿namespace messageservice.Services.Interfaces
 {
     public interface ITenantResolver
     {

@@ -1,0 +1,13 @@
+docker build -t dmitriyshv/tenantservice .
+docker push dmitriyshv/tenantservice
+docker build -t dmitriyshv/chatservice .
+docker push dmitriyshv/chatservice
+docker build -t dmitriyshv/messageservice .
+docker push dmitriyshv/messageservice
+
+kubectl apply -f tenant-np-srv.yaml
+kubectl apply -f tenant-depl.yaml
+kubectl apply -f chat-np-srv.yaml
+kubectl apply -f chat-depl.yaml
+kubectl apply -f message-np-srv.yaml
+kubectl apply -f message-depl.yaml

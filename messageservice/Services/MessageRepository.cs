@@ -1,10 +1,10 @@
-﻿using MessageService.WebApi.Dto;
-using MessageService.WebApi.Services.Interfaces;
+﻿using messageservice.Dto;
+using messageservice.Services.Interfaces;
 using MicroOrm.Dapper.Repositories;
 using MicroOrm.Dapper.Repositories.SqlGenerator;
 using System.Data;
 
-namespace MessageService.WebApi.Services
+namespace messageservice.Services
 {
     public class MessageRepository : DapperRepository<MessageDto>, IGenericRepository<MessageDto>
     {
@@ -13,9 +13,9 @@ namespace MessageService.WebApi.Services
         {
         }
 
-        public async Task<IEnumerable<MessageDto>> GetAllAsync(PageOptionsDto opts)
+        public async Task<IEnumerable<MessageDto>> GetAllAsync(Guid parentId, PageOptionsDto opts)
         {
-            return (await FindAllAsync(x => !x.Deleted)).ToArray();
+            return (await FindAllAsync(x => !x.Deleted && x.ChatUID == parentId)).ToArray();
         }
 
         public Task<IEnumerable<MessageDto>> GetAllAsync(int teamId, PageOptionsDto opts)

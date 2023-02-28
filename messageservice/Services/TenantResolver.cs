@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using MessageService.WebApi.Services.Interfaces;
+using messageservice.Services.Interfaces;
 
-namespace MessageService.WebApi.Services
+namespace messageservice.Services
 {
     public class TenantResolver : ITenantResolver
     {

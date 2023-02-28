@@ -2,9 +2,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 
-namespace PerspectProperty.Application.Services
+namespace messageservice.Services
 {
-    public static class IContextExtensions
+    public static class ContextExtensions
     {
         private const string Sql = "EXEC SP_SET_SESSION_CONTEXT @key=N'TenantUID', @value = @tenantUID";
 
@@ -20,7 +20,7 @@ namespace PerspectProperty.Application.Services
                     throw new ValidationException("TenantUID is invalid.");
                 }
 
-                conn.Execute(Sql, new { tenantUID = string.Empty });
+                conn.Execute(Sql, new { tenantUID });
 
             }
         }

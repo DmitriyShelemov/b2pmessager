@@ -1,13 +1,21 @@
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build-env
+#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
+EXPOSE 80
 
-COPY *.csproj ./
-RUN dotnet restore
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+WORKDIR /src
+COPY ["messageservice.csproj", "."]
+RUN dotnet restore "./messageservice.csproj"
+COPY . .
+WORKDIR "/src/."
+RUN dotnet build "messageservice.csproj" -c Release -o /app/build
 
-COPY . ./
-RUN dotnet publish -c Release -o out
+FROM build AS publish
+RUN dotnet publish "messageservice.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-FROM mcr.microsoft.com/dotnet/aspnet:7.0
+FROM base AS final
 WORKDIR /app
-COPY --from=build-env /app/out .
-ENTRYPOINT [ "dotnet", "MessageService.WebApi.dll" ]
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "messageservice.dll"]

@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace MessageService.WebApi.Dto
+namespace messageservice.Dto
 {
     public class MessageCreateDto : MessageDto
     {

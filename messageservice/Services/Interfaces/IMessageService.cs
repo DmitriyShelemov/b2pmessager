@@ -1,8 +1,8 @@
-﻿using MessageService.WebApi.Dto;
+﻿using messageservice.Dto;
 
-namespace MessageService.WebApi.Services.Interfaces
+namespace messageservice.Services.Interfaces
 {
-    public interface IMessageService : ICrudService<MessageDto, MessageCreateDto, MessageCreateDto>
+    public interface IMessageService : ICrudService<MessageDto, MessageCreateDto, MessageUpdateDto>
     {
     }
 }

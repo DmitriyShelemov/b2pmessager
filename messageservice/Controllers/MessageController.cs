@@ -1,100 +1,31 @@
 using FluentValidation;
-using MessageService.WebApi.Dto;
-using MessageService.WebApi.Services.Interfaces;
+using messageservice.Dto;
+using messageservice.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MessageService.WebApi.Controllers
+namespace messageservice.Controllers
 {
-    public class MessageController : BaseTenantController
+    public class MessageController
+        : BaseChildController<MessageCreateDto, MessageUpdateDto, MessageDto, IMessageService>
     {
-        private readonly IMessageService _service;
-        private readonly IValidator<MessageCreateDto> _validator;
-
-        public MessageController(IMessageService service, IValidator<MessageCreateDto> validator)
+        public MessageController(
+            IMessageService service,
+            IValidator<MessageCreateDto> validator,
+            IValidator<MessageUpdateDto> updateValidator)
+            : base(service, validator, updateValidator)
         {
-            _service = service;
-            _validator = validator;
-
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetMessage(string id)
+        protected override Guid GetUID(MessageCreateDto entity) => entity.MessageUID;
+
+        protected override void SetUID(MessageUpdateDto entity, Guid uid) => entity.MessageUID = uid;
+
+        protected override Guid GetTenantUID(MessageCreateDto entity) => entity.TenantUID;
+
+        [HttpGet(TenantRoute + "Chat/{chatId}/[controller]")]
+        public override async Task<IActionResult> GetAll(string chatId, uint? take, uint? skip)
         {
-            if (!Guid.TryParse(id, out var uid))
-            {
-                return BadRequest();
-            }
-
-            var entity = await _service.GetByIdAsync(uid);
-            if (entity == null)
-            {
-                return NotFound();
-            }
-            return Ok(entity);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetMessages(uint? take, uint? skip)
-        {
-            var entities = await _service.GetAllAsync(PageOptionsDto.Build(take, skip));
-            return Ok(entities);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateMessage(MessageCreateDto entity)
-        {
-            var result = await _validator.ValidateAsync(entity);
-            if (!result.IsValid)
-            {
-                return BadRequest(result.Errors.Select(x => x.ErrorMessage).ToArray());
-            }
-
-            if (!await _service.AddAsync(entity))
-            {
-                return BadRequest();
-            }
-            return CreatedAtAction(nameof(GetMessage), new
-            {
-                id = entity.MessageUID.ToString("D"),
-                teamId = entity.TenantUID.ToString("D")
-            }, entity);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateMessage(string id, MessageCreateDto entity)
-        {
-            if (!Guid.TryParse(id, out var uid))
-            {
-                return BadRequest();
-            }
-
-            var result = await _validator.ValidateAsync(entity);
-            if (!result.IsValid)
-            {
-                return BadRequest(result.Errors.Select(x => x.ErrorMessage).ToArray());
-            }
-
-            entity.MessageUID = uid;
-            if (!await _service.UpdateAsync(entity))
-            {
-                return BadRequest();
-            }
-            return NoContent();
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id)
-        {
-            if (!Guid.TryParse(id, out var uid))
-            {
-                return BadRequest();
-            }
-
-            if (!await _service.DeleteAsync(uid))
-            {
-                return BadRequest();
-            }
-            return NoContent();
+            return await base.GetAll(chatId, take, skip);
         }
     }
 }

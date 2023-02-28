@@ -1,15 +1,14 @@
 using DbUp;
 using FluentValidation;
-using MessageService.WebApi.Dto;
-using MessageService.WebApi.Services;
-using MessageService.WebApi.Services.Interfaces;
-using MessageService.WebApi.Validators;
+using messageservice.Dto;
+using messageservice.Services;
+using messageservice.Services.Interfaces;
+using messageservice.Validators;
 using MicroOrm.Dapper.Repositories.SqlGenerator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Data.SqlClient;
 using Microsoft.OpenApi.Models;
-using PerspectProperty.Application.Services;
 using System.Data;
 using System.Net.Mime;
 using System.Reflection;
@@ -19,8 +18,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IValidator<MessageCreateDto>, MessageCreateDtoValidator>();
+builder.Services.AddTransient<IValidator<MessageUpdateDto>, MessageUpdateDtoValidator>();
 builder.Services.AddTransient<ITenantResolver, TenantResolver>();
-builder.Services.AddTransient<IMessageService, MessageService.WebApi.Services.MessageService>();
+builder.Services.AddTransient<IMessageService, messageservice.Services.MessageService>();
 builder.Services.AddTransient<IGenericRepository<MessageDto>, MessageRepository>();
 builder.Services.AddSingleton(typeof(ISqlGenerator<>), typeof(SqlGenerator<>));
 
@@ -58,11 +58,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    //c.IncludeXmlComments(string.Format(@"{0}\MessageService.WebApi.xml", System.AppDomain.CurrentDomain.BaseDirectory));
+    //c.IncludeXmlComments(string.Format(@"{0}\messageservice.xml", System.AppDomain.CurrentDomain.BaseDirectory));
     c.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
-        Title = "MessageService.WebApi",
+        Title = "messageservice",
     });
 
     //c.AddSecurityDefinition(
@@ -96,18 +96,8 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-//}
-
 //app.UseHttpsRedirection();
 app.UseRouting();
-
-app.UseAuthentication();
-app.UseAuthorization();
 app.UseExceptionHandler(exceptionHandlerApp =>
 {
     exceptionHandlerApp.Run(async context =>
@@ -128,6 +118,16 @@ app.UseExceptionHandler(exceptionHandlerApp =>
         }
     });
 });
+
+// Configure the HTTP request pipeline.
+//if (app.Environment.IsDevelopment())
+//{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+//}
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

@@ -1,6 +1,6 @@
-﻿using MessageService.WebApi.Entities;
+﻿using messageservice.Entities;
 
-namespace MessageService.WebApi.Dto
+namespace messageservice.Dto
 {
     public class MessageDto : Message
     {
