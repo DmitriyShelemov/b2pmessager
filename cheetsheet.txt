@@ -4,6 +4,8 @@ docker build -t dmitriyshv/chatservice .
 docker push dmitriyshv/chatservice
 docker build -t dmitriyshv/messageservice .
 docker push dmitriyshv/messageservice
+docker build -t dmitriyshv/facadeservice .
+docker push dmitriyshv/facadeservice
 
 kubectl apply -f tenant-np-srv.yaml
 kubectl apply -f tenant-depl.yaml
@@ -11,3 +13,5 @@ kubectl apply -f chat-np-srv.yaml
 kubectl apply -f chat-depl.yaml
 kubectl apply -f message-np-srv.yaml
 kubectl apply -f message-depl.yaml
+kubectl apply -f facade-np-srv.yaml
+kubectl apply -f facade-depl.yaml

@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: facade-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: facadeservice
+  template:
+    metadata:
+      labels:
+        app: facadeservice
+    spec:
+      containers:
+        - name: facadeservice
+          image: dmitriyshv/facadeservice:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: facade-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: facadeservice
+  ports:
+  - name: facadeservice
+    protocol: TCP
+    port: 80
+    targetPort: 80
