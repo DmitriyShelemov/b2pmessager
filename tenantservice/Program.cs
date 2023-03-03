@@ -4,6 +4,8 @@ using MicroOrm.Dapper.Repositories.SqlGenerator;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Data.SqlClient;
 using Microsoft.OpenApi.Models;
+using queuemessagelibrary.MessageBus;
+using queuemessagelibrary.MessageBus.Interfaces;
 using System.Data;
 using System.Net.Mime;
 using System.Reflection;
@@ -18,6 +20,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IValidator<TenantCreateDto>, TenantCreateDtoValidator>();
 builder.Services.AddTransient<ITenantService, TenantService>();
+builder.Services.AddSingleton<TenantRpc>();
+builder.Services.AddSingleton<IMessagePublisher<TenantDto>, TenantPublisher>();
 builder.Services.AddTransient<IGenericRepository<TenantDto>, TenantRepository>();
 builder.Services.AddSingleton(typeof(ISqlGenerator<>), typeof(SqlGenerator<>));
 

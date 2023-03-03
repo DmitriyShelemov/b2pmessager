@@ -1,12 +1,16 @@
-﻿namespace tenantservice.Dto
+﻿using queuemessagelibrary.MessageBus.Interfaces;
+
+namespace tenantservice.Dto
 {
-    public class PageOptionsDto
+    public class PageOptionsDto : IBaseEvent<CrudActionType>
     {
         private const uint MaxTake = 50;
 
         public uint Skip { get; set; }
 
         public uint Take { get; set; } = MaxTake;
+
+        public CrudActionType EventType { get; set; }
 
         public static PageOptionsDto Build(uint? take, uint? skip)
         {
