@@ -4,7 +4,6 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Channels;
 
 namespace queuemessagelibrary.MessageBus
 {
@@ -14,7 +13,7 @@ namespace queuemessagelibrary.MessageBus
         private readonly IEventProcessor<TMessage> _eventProcessor;
         private readonly string _exchangeName;
         private readonly string _queueName;
-        private readonly IModel _channel;
+        private readonly IModel? _channel;
 
         public MessageSubscriber(IMessageConnection connection,
             IEventProcessor<TMessage> eventProcessor, string exchangeName)
@@ -51,6 +50,9 @@ namespace queuemessagelibrary.MessageBus
         {
             stoppingToken.ThrowIfCancellationRequested();
 
+            if (_channel == null)
+                throw new InvalidOperationException();
+
             var consumer = new EventingBasicConsumer(_channel);
 
             consumer.Received += async (ModuleHandle, ea) =>
@@ -70,10 +72,11 @@ namespace queuemessagelibrary.MessageBus
             return Task.CompletedTask;
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
+            base.Dispose();
             Console.WriteLine("MessageBus Disposed");
-            if (_channel.IsOpen)
+            if (_channel?.IsOpen == true)
             {
                 _channel.Close();
             }

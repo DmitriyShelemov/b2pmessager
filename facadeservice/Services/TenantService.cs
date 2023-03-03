@@ -5,12 +5,11 @@ namespace facadeservice.Services
 {
     public class TenantService : ITenantService
     {
-        private readonly IGenericRepository<TenantDto> _repository;
+        private readonly IRpcClient<TenantDto> _rpcClient;
 
-        public TenantService(
-            IGenericRepository<TenantDto> repository)
+        public TenantService(IRpcClient<TenantDto> rpcClient)
         {
-            _repository = repository;
+            _rpcClient = rpcClient;
         }
 
         public async Task<IEnumerable<TenantDto>> GetAllAsync(PageOptionsDto opts)
@@ -18,7 +17,8 @@ namespace facadeservice.Services
             //    if (!await _context.CanReadBaccountAsync())
             //        throw new UnauthorizedAccessException();
 
-            return await _repository.GetAllAsync(opts);
+            opts.EventType = CrudActionType.Gets;
+            return await _rpcClient.RequestAsync<PageOptionsDto, IEnumerable<TenantDto>>(opts) ?? Enumerable.Empty<TenantDto>();
         }
 
         public async Task<bool> AddAsync(TenantCreateDto entity)
@@ -31,8 +31,13 @@ namespace facadeservice.Services
             //if (!await _context.CanCreateBaccountAsync())
             //    throw new UnauthorizedAccessException();
 
-            entity.TenantUID = Guid.NewGuid();
-            return await _repository.AddAsync(entity);
+            entity.EventType = CrudActionType.Create;
+            var created = await _rpcClient.RequestAsync<TenantCreateDto, TenantDto>(entity);
+            if (created == null)
+                return false;
+
+            entity.TenantUID = created.TenantUID;
+            return true;
         }
 
         public async Task<bool> UpdateAsync(TenantCreateDto entity)
@@ -45,24 +50,23 @@ namespace facadeservice.Services
             //if (!await _context.CanEditBaccountAsync())
             //    throw new UnauthorizedAccessException();
 
-            var old = await _repository.GetByIdAsync(entity.TenantUID);
-            if (old != null)
-            {
-                old.Name = entity.Name;
-                old.Email = entity.Email;
-
-                return await _repository.UpdateAsync(old);
-            }
-
-            return false;
+            entity.EventType = CrudActionType.Update;
+            var updated = await _rpcClient.RequestAsync<TenantCreateDto, BoolDto>(entity);
+            return updated?.Done ?? false;
         }
 
-        public async Task<TenantDto> GetByIdAsync(Guid id)
+        public async Task<TenantDto?> GetByIdAsync(Guid id)
         {
             //if (!await _context.CanReadBaccountAsync())
             //    throw new UnauthorizedAccessException();
 
-            return await _repository.GetByIdAsync(id);
+            var guidDto = new GuidDto
+            {
+                Id = id,
+                EventType = CrudActionType.Get
+            };
+
+            return await _rpcClient.RequestAsync<GuidDto, TenantDto>(guidDto);
         }
 
         public async Task<bool> DeleteAsync(Guid id)
@@ -70,14 +74,14 @@ namespace facadeservice.Services
             //if (!await _context.CanEditBaccountAsync())
             //    throw new UnauthorizedAccessException();
 
-            var old = await _repository.GetByIdAsync(id);
-            if (old != null)
+            var guidDto = new GuidDto
             {
-                old.Deleted = true;
-                return await _repository.UpdateAsync(old);
-            }
+                Id = id,
+                EventType = CrudActionType.Delete
+            };
 
-            return false;
+            var deleted = await _rpcClient.RequestAsync<GuidDto, BoolDto>(guidDto);
+            return deleted?.Done ?? false;
         }
 
         public Task<IEnumerable<TenantDto>> GetAllAsync(Guid parentId, PageOptionsDto opts)

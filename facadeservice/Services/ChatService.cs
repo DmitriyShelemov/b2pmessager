@@ -60,7 +60,7 @@ namespace facadeservice.Services
             return false;
         }
 
-        public async Task<ChatDto> GetByIdAsync(Guid id)
+        public async Task<ChatDto?> GetByIdAsync(Guid id)
         {
             //if (!await _context.CanReadBaccountAsync())
             //    throw new UnauthorizedAccessException();

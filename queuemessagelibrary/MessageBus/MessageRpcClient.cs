@@ -11,7 +11,7 @@ namespace queuemessagelibrary.MessageBus
     {
         private readonly IMessageConnection _connection;
         private readonly string _queueName;
-        private readonly IModel _channel;
+        private readonly IModel? _channel;
         private readonly ConcurrentDictionary<string, TaskCompletionSource<string>> _callbackMapper = new();
 
         public MessageRpcClient(IMessageConnection connection, string queueName)
@@ -49,7 +49,7 @@ namespace queuemessagelibrary.MessageBus
             }
         }
 
-        public async Task<TResponse> RequestAsync<TRequest, TResponse>(TRequest dto)
+        public async Task<TResponse?> RequestAsync<TRequest, TResponse>(TRequest dto)
             where TRequest : class
             where TResponse : class
         {
@@ -69,6 +69,9 @@ namespace queuemessagelibrary.MessageBus
 
         private Task<string> CallAsync(string message, CancellationToken cancellationToken = default)
         {
+            if (_channel == null)
+                throw new InvalidOperationException();
+
             IBasicProperties props = _channel.CreateBasicProperties();
             var correlationId = Guid.NewGuid().ToString();
             props.CorrelationId = correlationId;
@@ -89,7 +92,7 @@ namespace queuemessagelibrary.MessageBus
         public void Dispose()
         {
             Console.WriteLine("MessageBus Disposed");
-            if (_channel.IsOpen)
+            if (_channel?.IsOpen == true)
             {
                 _channel.Close();
             }

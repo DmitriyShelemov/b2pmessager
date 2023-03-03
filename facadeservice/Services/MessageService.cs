@@ -60,7 +60,7 @@ namespace facadeservice.Services
             return false;
         }
 
-        public async Task<MessageDto> GetByIdAsync(Guid id)
+        public async Task<MessageDto?> GetByIdAsync(Guid id)
         {
             //if (!await _context.CanReadBaccountAsync())
             //    throw new UnauthorizedAccessException();

@@ -8,7 +8,7 @@ namespace facadeservice.Services.Interfaces
 
         Task<IEnumerable<T>> GetAllAsync(Guid parentId, PageOptionsDto opts);
 
-        Task<T> GetByIdAsync(Guid id);
+        Task<T?> GetByIdAsync(Guid id);
 
         Task<bool> AddAsync(R entity);
 

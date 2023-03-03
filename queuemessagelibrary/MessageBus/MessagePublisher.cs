@@ -11,7 +11,7 @@ namespace queuemessagelibrary.MessageBus
     {
         private readonly IMessageConnection _connection;
         private readonly string _exchangeName;
-        private readonly IModel _channel;
+        private readonly IModel? _channel;
 
         public MessagePublisher(IMessageConnection connection, string exchangeName)
         {
@@ -50,6 +50,9 @@ namespace queuemessagelibrary.MessageBus
 
         private void SendMessage(string message)
         {
+            if (_channel == null)
+                throw new InvalidOperationException();
+
             var body = Encoding.UTF8.GetBytes(message);
 
             var properties = _channel.CreateBasicProperties();
@@ -65,7 +68,7 @@ namespace queuemessagelibrary.MessageBus
         public void Dispose()
         {
             Console.WriteLine("MessageBus Disposed");
-            if (_channel.IsOpen)
+            if (_channel?.IsOpen == true)
             {
                 _channel.Close();
             }

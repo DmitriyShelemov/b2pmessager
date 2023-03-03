@@ -1,12 +1,12 @@
-﻿namespace tenantservice.Dto
+﻿namespace facadeservice.Dto
 {
     public enum CrudActionType
     {
         None,
         Get,
         Gets,
-        Create, 
-        Update, 
+        Create,
+        Update,
         Delete
     }
 }

@@ -13,7 +13,7 @@ namespace queuemessagelibrary.MessageBus
         private readonly IMessageConnection _connection;
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly string _queueName;
-        private readonly IModel _channel;
+        private readonly IModel? _channel;
 
         public MessageRpc(IMessageConnection connection, IServiceScopeFactory scopeFactory, string queueName)
         {
@@ -39,6 +39,9 @@ namespace queuemessagelibrary.MessageBus
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             stoppingToken.ThrowIfCancellationRequested();
+
+            if (_channel == null)
+                throw new InvalidOperationException();
 
             var consumer = new EventingBasicConsumer(_channel);
 
@@ -83,10 +86,11 @@ namespace queuemessagelibrary.MessageBus
             return Task.CompletedTask;
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
+            base.Dispose();
             Console.WriteLine("MessageBus Disposed");
-            if (_channel.IsOpen)
+            if (_channel?.IsOpen == true)
             {
                 _channel.Close();
             }

@@ -19,6 +19,7 @@ builder.Services.AddTransient<ITenantResolver, TenantResolver>();
 builder.Services.AddTransient<ITenantService, TenantService>();
 builder.Services.AddTransient<IChatService, ChatService>();
 builder.Services.AddTransient<IMessageService, MessageService>();
+builder.Services.AddSingleton<IRpcClient<TenantDto>, TenantRpcClient>();
 builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
 builder.Services.AddControllers();

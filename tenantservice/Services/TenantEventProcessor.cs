@@ -42,24 +42,26 @@ namespace tenantservice.Services
                         var result = await _validator.ValidateAsync(m);
                         if (!result.IsValid)
                         {
-                            return false;
+                            return null;
                             //return BadRequest(result.Errors.Select(x => x.ErrorMessage).ToArray());
                         }
 
                         var done = await _service.AddAsync(m);
                         if (done)
                         {
-                            _publisher.Publish(new TenantDto
+                            var created = new TenantDto
                             {
                                 Name = m.Name,
                                 TenantUID = m.TenantUID
-                            });
+                            };
+                            _publisher.Publish(created);
+
+                            return created;
                         }
                         else
                         {
-
+                            return null;
                         }
-                        return done;
                     });
                 case CrudActionType.Update:
                     return await CallService<TenantCreateDto>(src, async (m) => {
@@ -71,7 +73,7 @@ namespace tenantservice.Services
                             //return BadRequest(result.Errors.Select(x => x.ErrorMessage).ToArray());
                         }
 
-                        return await _service.UpdateAsync(m); 
+                        return new BoolDto { Done = await _service.UpdateAsync(m) };
                     });
                 case CrudActionType.Delete:
                     return await CallService<GuidDto>(src, async (m) => { 
@@ -88,7 +90,8 @@ namespace tenantservice.Services
                         {
 
                         }
-                        return done;
+
+                        return new BoolDto { Done = done };
                     });
                 default:
                     throw new NotImplementedException();
