@@ -2,7 +2,7 @@
 
 namespace facadeservice.Dto
 {
-    public class PageOptionsDto : IBaseEvent<CrudActionType>
+    public class PageOptionsDto : IBaseEvent<CrudActionType>, ITenantContext
     {
         private const uint MaxTake = 50;
 
@@ -11,6 +11,8 @@ namespace facadeservice.Dto
         public uint Take { get; set; } = MaxTake;
 
         public CrudActionType EventType { get; set; }
+
+        public Guid TenantUID { get; set; }
 
         public static PageOptionsDto Build(uint? take, uint? skip)
         {

@@ -29,7 +29,7 @@
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
     <PackageReference Include="MicroOrm.Dapper.Repositories" Version="1.25.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
-    <PackageReference Include="queuemessagelibrary" Version="1.0.3" />
+    <PackageReference Include="queuemessagelibrary" Version="1.0.4" />
   </ItemGroup>
 
 </Project>

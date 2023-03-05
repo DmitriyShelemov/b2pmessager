@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using queuemessagelibrary.MessageBus.Interfaces;
 using RabbitMQ.Client;
@@ -10,16 +11,15 @@ namespace queuemessagelibrary.MessageBus
     public class MessageSubscriber<TMessage> : BackgroundService where TMessage : class
     {
         private readonly IMessageConnection _connection;
-        private readonly IEventProcessor<TMessage> _eventProcessor;
+        private readonly IServiceScopeFactory _scopeFactory;
         private readonly string _exchangeName;
         private readonly string _queueName;
         private readonly IModel? _channel;
 
-        public MessageSubscriber(IMessageConnection connection,
-            IEventProcessor<TMessage> eventProcessor, string exchangeName)
+        public MessageSubscriber(IMessageConnection connection, IServiceScopeFactory scopeFactory, string exchangeName)
         {
             _connection = connection;
-            _eventProcessor = eventProcessor;
+            _scopeFactory = scopeFactory;
             _exchangeName = exchangeName;
 
             try
@@ -58,11 +58,22 @@ namespace queuemessagelibrary.MessageBus
             consumer.Received += async (ModuleHandle, ea) =>
             {
                 var body = ea.Body;
-                var notificationMessage = Encoding.UTF8.GetString(body.ToArray());
+ 
+                try
+                {
+                    var notificationMessage = Encoding.UTF8.GetString(body.ToArray());
+                    var eventType = JsonSerializer.Deserialize<TMessage>(notificationMessage);
 
-                var eventType = JsonSerializer.Deserialize<TMessage>(notificationMessage);
-
-                await _eventProcessor.ProcessEvent(eventType, notificationMessage);
+                    using (var scope = _scopeFactory.CreateScope())
+                    {
+                        var processor = scope.ServiceProvider.GetRequiredService<IEventProcessor<TMessage>>();
+                        await processor.ProcessEvent(eventType, notificationMessage);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($" [.] {e.Message}");
+                }
 
                 _channel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
             };

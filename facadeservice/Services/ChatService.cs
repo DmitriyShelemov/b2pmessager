@@ -20,6 +20,7 @@ namespace facadeservice.Services
             //    if (!await _context.CanReadBaccountAsync())
             //        throw new UnauthorizedAccessException();
 
+            opts.TenantUID = _tenantResolver.GetTenantUID();
             opts.EventType = CrudActionType.Gets;
             return await _rpcClient.RequestAsync<PageOptionsDto, IEnumerable<ChatDto>>(opts) ?? Enumerable.Empty<ChatDto>();
         }
@@ -54,6 +55,7 @@ namespace facadeservice.Services
             //if (!await _context.CanEditBaccountAsync())
             //    throw new UnauthorizedAccessException();
 
+            entity.TenantUID = _tenantResolver.GetTenantUID();
             entity.EventType = CrudActionType.Update;
             var updated = await _rpcClient.RequestAsync<ChatCreateDto, BoolDto>(entity);
             return updated?.Done ?? false;
@@ -67,7 +69,8 @@ namespace facadeservice.Services
             var guidDto = new GuidDto
             {
                 Id = id,
-                EventType = CrudActionType.Get
+                EventType = CrudActionType.Get,
+                TenantUID = _tenantResolver.GetTenantUID()
             };
 
             return await _rpcClient.RequestAsync<GuidDto, ChatDto>(guidDto);
@@ -81,9 +84,9 @@ namespace facadeservice.Services
             var guidDto = new GuidDto
             {
                 Id = id,
-                EventType = CrudActionType.Delete
+                EventType = CrudActionType.Delete,
+                TenantUID = _tenantResolver.GetTenantUID()
             };
-
             var deleted = await _rpcClient.RequestAsync<GuidDto, BoolDto>(guidDto);
             return deleted?.Done ?? false;
         }

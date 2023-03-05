@@ -1,11 +1,33 @@
+cd ../nuget
+docker run -d --rm -p 5555:80 --name baget --env-file baget.env -v "$(pwd)/baget-data:/var/baget" loicsharma/baget:latest
+
+$BagetIp = docker container inspect  -f '{{ .NetworkSettings.IPAddress }}' baget
+
+cd ../b2pmessager
+
+cd tenantservice
+((Get-Content -path DockerFile -Raw) -replace 'BagetIp',$BagetIp) | Set-Content -Path DockerFile
 docker build -t dmitriyshv/tenantservice .
 docker push dmitriyshv/tenantservice
+((Get-Content -path DockerFile -Raw) -replace $BagetIp,'BagetIp') | Set-Content -Path DockerFile
+
+cd ../chatservice
+((Get-Content -path DockerFile -Raw) -replace 'BagetIp',$BagetIp) | Set-Content -Path DockerFile
 docker build -t dmitriyshv/chatservice .
 docker push dmitriyshv/chatservice
+((Get-Content -path DockerFile -Raw) -replace $BagetIp,'BagetIp') | Set-Content -Path DockerFile
+
+cd ../messageservice
+((Get-Content -path DockerFile -Raw) -replace 'BagetIp',$BagetIp) | Set-Content -Path DockerFile
 docker build -t dmitriyshv/messageservice .
 docker push dmitriyshv/messageservice
+((Get-Content -path DockerFile -Raw) -replace $BagetIp,'BagetIp') | Set-Content -Path DockerFile
+
+cd ../facadeservice
+((Get-Content -path DockerFile -Raw) -replace 'BagetIp',$BagetIp) | Set-Content -Path DockerFile
 docker build -t dmitriyshv/facadeservice .
 docker push dmitriyshv/facadeservice
+((Get-Content -path DockerFile -Raw) -replace $BagetIp,'BagetIp') | Set-Content -Path DockerFile
 
 kubectl apply -f tenant-np-srv.yaml
 kubectl apply -f tenant-depl.yaml

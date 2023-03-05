@@ -7,6 +7,9 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["messageservice.csproj", "."]
+
+RUN dotnet nuget add source http://BagetIp:80/v3/index.json -n LocalNuget
+
 RUN dotnet restore "./messageservice.csproj"
 COPY . .
 WORKDIR "/src/."

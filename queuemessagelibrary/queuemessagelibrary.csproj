@@ -9,7 +9,7 @@
     <IncludeSymbols>True</IncludeSymbols>
     <SignAssembly>False</SignAssembly>
     <DelaySign>True</DelaySign>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
     <Product>B2Pmessager</Product>
   </PropertyGroup>
 

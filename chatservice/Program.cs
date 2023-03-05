@@ -20,8 +20,10 @@ builder.Services.AddTransient<IValidator<ChatCreateDto>, ChatCreateDtoValidator>
 builder.Services.AddTransient<ITenantResolver, TenantResolver>();
 builder.Services.AddTransient<IChatService, ChatService>();
 builder.Services.AddTransient<IGenericRepository<ChatDto>, ChatRepository>();
+builder.Services.AddTransient<IGenericRepository<TenantDto>, TenantRepository>();
 builder.Services.AddSingleton(typeof(ISqlGenerator<>), typeof(SqlGenerator<>));
 builder.Services.AddScoped<IEventProcessor<BaseEvent<CrudActionType>>, ChatEventProcessor>();
+builder.Services.AddScoped<IEventProcessor<TenantDto>, TenantPublishingProcessor>();
 builder.Services.AddHostedService<ChatRpc>();
 builder.Services.AddHostedService<TenantSubscriber>();
 builder.Services.AddSingleton<IMessagePublisher<ChatDto>, ChatPublisher>();

@@ -6,8 +6,10 @@ namespace chatservice.Services
 {
     public class TenantSubscriber : MessageSubscriber<TenantDto>
     {
-        public TenantSubscriber(IMessageConnection connection, IEventProcessor<TenantDto> eventProcessor) 
-            : base(connection, eventProcessor, "tenantpublisher")
+        public TenantSubscriber(
+            IMessageConnection connection,
+            IServiceScopeFactory scopeFactory) 
+            : base(connection, scopeFactory, "tenantpublisher")
         {
         }
     }
