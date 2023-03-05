@@ -15,9 +15,6 @@ namespace tenantservice.Services
 
         public async Task<IEnumerable<TenantDto>> GetAllAsync(PageOptionsDto opts)
         {
-            //    if (!await _context.CanReadBaccountAsync())
-            //        throw new UnauthorizedAccessException();
-
             return await _repository.GetAllAsync(opts);
         }
 
@@ -27,9 +24,6 @@ namespace tenantservice.Services
             {
                 throw new ArgumentNullException(nameof(entity));
             }
-
-            //if (!await _context.CanCreateBaccountAsync())
-            //    throw new UnauthorizedAccessException();
 
             entity.TenantUID = Guid.NewGuid();
             return await _repository.AddAsync(entity);
@@ -41,9 +35,6 @@ namespace tenantservice.Services
             {
                 throw new ArgumentNullException(nameof(entity));
             }
-
-            //if (!await _context.CanEditBaccountAsync())
-            //    throw new UnauthorizedAccessException();
 
             var old = await _repository.GetByIdAsync(entity.TenantUID);
             if (old != null)
@@ -59,17 +50,11 @@ namespace tenantservice.Services
 
         public async Task<TenantDto> GetByIdAsync(Guid id)
         {
-            //if (!await _context.CanReadBaccountAsync())
-            //    throw new UnauthorizedAccessException();
-
             return await _repository.GetByIdAsync(id);
         }
 
         public async Task<bool> DeleteAsync(Guid id)
         {
-            //if (!await _context.CanEditBaccountAsync())
-            //    throw new UnauthorizedAccessException();
-
             var old = await _repository.GetByIdAsync(id);
             if (old != null)
             {

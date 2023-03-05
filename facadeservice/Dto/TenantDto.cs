@@ -1,6 +1,4 @@
-﻿using facadeservice.Entities;
-
-namespace facadeservice.Dto
+﻿namespace facadeservice.Dto
 {
     public class TenantDto
     {

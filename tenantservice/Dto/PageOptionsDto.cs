@@ -4,7 +4,7 @@ namespace tenantservice.Dto
 {
     public class PageOptionsDto : IBaseEvent<CrudActionType>
     {
-        private const uint MaxTake = 50;
+        public const uint MaxTake = 50;
 
         public uint Skip { get; set; }
 

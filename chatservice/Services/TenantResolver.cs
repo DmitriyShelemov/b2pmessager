@@ -1,27 +1,28 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Data;
 using chatservice.Services.Interfaces;
 
 namespace chatservice.Services
 {
     public class TenantResolver : ITenantResolver
     {
-        private readonly IHttpContextAccessor _accessor;
+        private readonly IDbConnection _connection;
 
-        public TenantResolver(
-            IHttpContextAccessor accessor)
+        public TenantResolver(IDbConnection connection)
         {
-            _accessor = accessor;
+            _connection = connection;
         }
 
-        public Guid GetTenantUID()
-        {
-            var tenantUID = _accessor?.HttpContext?.GetRouteValue("tenantUID");
-            if (tenantUID == null || !Guid.TryParse(tenantUID.ToString(), out var guidParsed))
-            {
-                throw new ValidationException("TenantUID is invalid.");
-            }
+        private Guid TenantUID { get; set; }
 
-            return guidParsed;
+
+        public Guid GetTenantUID() => TenantUID;
+
+        public void SetTenantUID(Guid uid)
+        {
+            if (uid == Guid.Empty)
+                throw new ArgumentOutOfRangeException(nameof(uid));
+
+            _connection.SetTenantUID(uid);
         }
     }
 }

@@ -2,31 +2,34 @@
 using queuemessagelibrary.MessageBus;
 using queuemessagelibrary.MessageBus.Interfaces;
 using System.Text.Json;
-using tenantservice.Dto;
-using tenantservice.Services.Interfaces;
+using chatservice.Dto;
+using chatservice.Services.Interfaces;
 
-namespace tenantservice.Services
+namespace chatservice.Services
 {
-    public class TenantEventProcessor : IEventProcessor<BaseEvent<CrudActionType>>
+    public class ChatEventProcessor : IEventProcessor<BaseEvent<CrudActionType>>
     {
-        private readonly ITenantService _service;
-        private readonly IValidator<TenantCreateDto> _validator;
+        private readonly IChatService _service;
+        private readonly IValidator<ChatCreateDto> _validator;
         private readonly IValidator<GuidDto> _guidValidator;
         private readonly IValidator<PageOptionsDto> _pagingValidator;
-        private readonly IMessagePublisher<TenantDto> _publisher;
+        private readonly IMessagePublisher<ChatDto> _publisher;
+        private readonly ITenantResolver _tenantResolver;
 
-        public TenantEventProcessor(
-            ITenantService service,
-            IMessagePublisher<TenantDto> publisher,
-            IValidator<TenantCreateDto> validator,
+        public ChatEventProcessor(
+            IChatService service,
+            IMessagePublisher<ChatDto> publisher,
+            IValidator<ChatCreateDto> validator,
             IValidator<GuidDto> guidValidator,
-            IValidator<PageOptionsDto> pagingValidator)
+            IValidator<PageOptionsDto> pagingValidator,
+            ITenantResolver tenantResolver)
         {
             _service = service;
             _publisher = publisher;
             _validator = validator;
             _guidValidator = guidValidator;
             _pagingValidator = pagingValidator;
+            _tenantResolver = tenantResolver;
         }
 
         public async Task<string?> ProcessEvent(BaseEvent<CrudActionType>? message, string src)
@@ -63,7 +66,8 @@ namespace tenantservice.Services
                         return await _service.GetAllAsync(m); 
                     });
                 case CrudActionType.Create:
-                    return await CallService<TenantCreateDto>(src, async (m) => {
+                    return await CallService<ChatCreateDto>(src, async (m) =>
+                    {
 
                         var result = await _validator.ValidateAsync(m);
                         if (!result.IsValid)
@@ -75,10 +79,10 @@ namespace tenantservice.Services
                         var done = await _service.AddAsync(m);
                         if (done)
                         {
-                            var created = new TenantDto
+                            var created = new ChatDto
                             {
                                 Name = m.Name,
-                                TenantUID = m.TenantUID
+                                ChatUID = m.ChatUID
                             };
                             _publisher.Publish(created);
 
@@ -90,8 +94,8 @@ namespace tenantservice.Services
                         }
                     });
                 case CrudActionType.Update:
-                    return await CallService<TenantCreateDto>(src, async (m) => {
-
+                    return await CallService<ChatCreateDto>(src, async (m) =>
+                    {
                         var result = await _validator.ValidateAsync(m);
                         if (!result.IsValid)
                         {
@@ -102,7 +106,8 @@ namespace tenantservice.Services
                         return new BoolDto { Done = await _service.UpdateAsync(m) };
                     });
                 case CrudActionType.Delete:
-                    return await CallService<GuidDto>(src, async (m) => {
+                    return await CallService<GuidDto>(src, async (m) =>
+                    {
 
                         var result = await _guidValidator.ValidateAsync(m);
                         if (!result.IsValid)
@@ -114,9 +119,9 @@ namespace tenantservice.Services
                         var done = await _service.DeleteAsync(m.Id);
                         if (done)
                         {
-                            _publisher.Publish(new TenantDto
+                            _publisher.Publish(new ChatDto
                             {
-                                TenantUID = m.Id,
+                                ChatUID = m.Id,
                                 Deleted = done
                             });
                         }
@@ -132,7 +137,7 @@ namespace tenantservice.Services
             }
         }
 
-        private async Task<string> CallService<T>(string src, Func<T, Task<object>> act) where T : IBaseEvent<CrudActionType>
+        private async Task<string> CallService<T>(string src, Func<T, Task<object>> act) where T : IBaseEvent<CrudActionType>, ITenantContext
         {
             if (src == null)
                 throw new ArgumentNullException(nameof(src));
@@ -142,6 +147,8 @@ namespace tenantservice.Services
             var getRequest = JsonSerializer.Deserialize<T>(src);
             if (getRequest == null)
                 throw new ArgumentNullException(nameof(getRequest));
+
+            _tenantResolver.SetTenantUID(getRequest.TenantUID);
 
             var getResponse = await act(getRequest);
             return JsonSerializer.Serialize(getResponse);

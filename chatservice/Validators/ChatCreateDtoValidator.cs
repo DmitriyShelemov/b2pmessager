@@ -10,6 +10,9 @@ namespace chatservice.Validators
             RuleFor(x => x.Name)
                 .MinimumLength(1)
                 .MaximumLength(100);
+
+            RuleFor(x => x.TenantUID)
+                .Must(x => x != Guid.Empty);
         }
     }
 }

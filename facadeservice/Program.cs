@@ -5,6 +5,8 @@ using facadeservice.Validators;
 using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.OpenApi.Models;
+using queuemessagelibrary.MessageBus.Interfaces;
+using queuemessagelibrary.MessageBus;
 using System.Net.Mime;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +22,7 @@ builder.Services.AddTransient<ITenantService, TenantService>();
 builder.Services.AddTransient<IChatService, ChatService>();
 builder.Services.AddTransient<IMessageService, MessageService>();
 builder.Services.AddSingleton<IRpcClient<TenantDto>, TenantRpcClient>();
+builder.Services.AddSingleton<IMessageConnection, MessageConnection>();
 builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
 builder.Services.AddControllers();

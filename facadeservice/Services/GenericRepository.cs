@@ -5,11 +5,8 @@ namespace facadeservice.Services
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        private readonly IRpcClient<T> _rpcClient;
-
-        public GenericRepository(IRpcClient<T> rpcClient)
+        public GenericRepository()
         {
-            _rpcClient = rpcClient;
         }
 
         public Task<bool> AddAsync(T entity)

@@ -7,13 +7,16 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["facadeservice.csproj", "."]
+
+RUN dotnet nuget add source http://172.17.0.2:80/v3/index.json -n LocalNuget
+
 RUN dotnet restore "./facadeservice.csproj"
 COPY . .
 WORKDIR "/src/."
 RUN dotnet build "facadeservice.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "facadeservice.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "facadeservice.csproj" -c Release -o /app/publish /p:UseAppHost=false --no-restore
 
 FROM base AS final
 WORKDIR /app

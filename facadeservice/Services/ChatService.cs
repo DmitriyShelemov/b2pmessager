@@ -5,15 +5,14 @@ namespace facadeservice.Services
 {
     public class ChatService : IChatService
     {
-        private readonly IGenericRepository<ChatDto> _repository;
+        private readonly IRpcClient<ChatDto> _rpcClient;
         private readonly ITenantResolver _tenantResolver;
 
         public ChatService(
-            IGenericRepository<ChatDto> repository,
-            ITenantResolver tenantResolver)
+            ITenantResolver tenantResolver, IRpcClient<ChatDto> rpcClient)
         {
-            _repository = repository;
             _tenantResolver = tenantResolver;
+            _rpcClient = rpcClient;
         }
 
         public async Task<IEnumerable<ChatDto>> GetAllAsync(PageOptionsDto opts)
@@ -21,7 +20,8 @@ namespace facadeservice.Services
             //    if (!await _context.CanReadBaccountAsync())
             //        throw new UnauthorizedAccessException();
 
-            return await _repository.GetAllAsync(opts);
+            opts.EventType = CrudActionType.Gets;
+            return await _rpcClient.RequestAsync<PageOptionsDto, IEnumerable<ChatDto>>(opts) ?? Enumerable.Empty<ChatDto>();
         }
 
         public async Task<bool> AddAsync(ChatCreateDto entity)
@@ -34,9 +34,14 @@ namespace facadeservice.Services
             //if (!await _context.CanCreateBaccountAsync())
             //    throw new UnauthorizedAccessException();
 
-            entity.ChatUID = Guid.NewGuid();
             entity.TenantUID = _tenantResolver.GetTenantUID();
-            return await _repository.AddAsync(entity);
+            entity.EventType = CrudActionType.Create;
+            var created = await _rpcClient.RequestAsync<ChatCreateDto, ChatDto>(entity);
+            if (created == null)
+                return false;
+
+            entity.ChatUID = created.ChatUID;
+            return true;
         }
 
         public async Task<bool> UpdateAsync(ChatCreateDto entity)
@@ -49,15 +54,9 @@ namespace facadeservice.Services
             //if (!await _context.CanEditBaccountAsync())
             //    throw new UnauthorizedAccessException();
 
-            var old = await _repository.GetByIdAsync(entity.ChatUID);
-            if (old != null)
-            {
-                old.Name = entity.Name;
-
-                return await _repository.UpdateAsync(old);
-            }
-
-            return false;
+            entity.EventType = CrudActionType.Update;
+            var updated = await _rpcClient.RequestAsync<ChatCreateDto, BoolDto>(entity);
+            return updated?.Done ?? false;
         }
 
         public async Task<ChatDto?> GetByIdAsync(Guid id)
@@ -65,7 +64,13 @@ namespace facadeservice.Services
             //if (!await _context.CanReadBaccountAsync())
             //    throw new UnauthorizedAccessException();
 
-            return await _repository.GetByIdAsync(id);
+            var guidDto = new GuidDto
+            {
+                Id = id,
+                EventType = CrudActionType.Get
+            };
+
+            return await _rpcClient.RequestAsync<GuidDto, ChatDto>(guidDto);
         }
 
         public async Task<bool> DeleteAsync(Guid id)
@@ -73,14 +78,14 @@ namespace facadeservice.Services
             //if (!await _context.CanEditBaccountAsync())
             //    throw new UnauthorizedAccessException();
 
-            var old = await _repository.GetByIdAsync(id);
-            if (old != null)
+            var guidDto = new GuidDto
             {
-                old.Deleted = true;
-                return await _repository.UpdateAsync(old);
-            }
+                Id = id,
+                EventType = CrudActionType.Delete
+            };
 
-            return false;
+            var deleted = await _rpcClient.RequestAsync<GuidDto, BoolDto>(guidDto);
+            return deleted?.Done ?? false;
         }
 
         public Task<IEnumerable<ChatDto>> GetAllAsync(Guid parentId, PageOptionsDto opts)
