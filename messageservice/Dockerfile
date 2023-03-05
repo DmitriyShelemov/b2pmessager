@@ -16,7 +16,7 @@ WORKDIR "/src/."
 RUN dotnet build "messageservice.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "messageservice.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "messageservice.csproj" -c Release -o /app/publish /p:UseAppHost=false --no-restore
 
 FROM base AS final
 WORKDIR /app
