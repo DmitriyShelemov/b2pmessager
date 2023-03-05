@@ -25,3 +25,5 @@ ENTRYPOINT ["dotnet", "messageservice.dll"]
 
 
 
+
+

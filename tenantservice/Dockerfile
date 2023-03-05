@@ -29,3 +29,5 @@ ENTRYPOINT ["dotnet", "tenantservice.dll"]
 
 
 
+
+

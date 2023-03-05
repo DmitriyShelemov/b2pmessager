@@ -23,6 +23,7 @@ namespace chatservice.Services
                 throw new ArgumentOutOfRangeException(nameof(uid));
 
             _connection.SetTenantUID(uid);
+            TenantUID = uid;
         }
     }
 }
