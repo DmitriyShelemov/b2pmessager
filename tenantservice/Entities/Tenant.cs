@@ -9,7 +9,6 @@ namespace tenantservice.Entities
     public class Tenant
     {
         [Key, Identity]
-        [JsonIgnore]
         public int TenantID { get; set; }
 
         public virtual Guid TenantUID { get; set; }
@@ -18,7 +17,6 @@ namespace tenantservice.Entities
 
         public string? Email { get; set; }
 
-        [JsonIgnore]
         public bool Deleted { get; set; }
     }
 }

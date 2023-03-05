@@ -8,7 +8,7 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["tenantservice.csproj", "."]
 
-RUN dotnet nuget add source http://BagetIp:80/v3/index.json -n LocalNuget
+RUN dotnet nuget add source http://172.17.0.2:80/v3/index.json -n LocalNuget
 
 RUN dotnet restore "./tenantservice.csproj"
 
@@ -23,6 +23,7 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "tenantservice.dll"]
+
 
 
 
