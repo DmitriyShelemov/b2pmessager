@@ -1,12 +1,20 @@
-﻿namespace messageservice.Dto
+﻿using queuemessagelibrary.MessageBus.Interfaces;
+
+namespace messageservice.Dto
 {
-    public class PageOptionsDto
+    public class PageOptionsDto : IBaseEvent<CrudActionType>, ITenantContext, IParentContext
     {
-        private const uint MaxTake = 50;
+        public const uint MaxTake = 50;
 
         public uint Skip { get; set; }
 
         public uint Take { get; set; } = MaxTake;
+
+        public CrudActionType EventType { get; set; }
+
+        public Guid TenantUID { get; set; }
+
+        public Guid ParentUID { get; set; }
 
         public static PageOptionsDto Build(uint? take, uint? skip)
         {

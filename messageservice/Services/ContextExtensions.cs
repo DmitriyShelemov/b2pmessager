@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using System.ComponentModel.DataAnnotations;
 using System.Data;
 
 namespace messageservice.Services
@@ -8,21 +7,17 @@ namespace messageservice.Services
     {
         private const string Sql = "EXEC SP_SET_SESSION_CONTEXT @key=N'TenantUID', @value = @tenantUID";
 
-        public static void SetTenantUID(this IDbConnection conn, object? tenantUID)
+        public static void SetTenantUID(this IDbConnection conn, Guid tenantUID)
         {
             if (conn == null)
                 return;
 
-            if (tenantUID != null)
+            if (conn.State != ConnectionState.Open)
             {
-                if (!Guid.TryParse(tenantUID.ToString(), out var guidParsed))
-                {
-                    throw new ValidationException("TenantUID is invalid.");
-                }
-
-                conn.Execute(Sql, new { tenantUID });
-
+                conn.Open();
             }
+
+            conn.Execute(Sql, new { tenantUID });
         }
     }
 }

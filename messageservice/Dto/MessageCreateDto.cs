@@ -1,10 +1,9 @@
-﻿using System.Text.Json.Serialization;
+﻿using queuemessagelibrary.MessageBus.Interfaces;
 
 namespace messageservice.Dto
 {
-    public class MessageCreateDto : MessageDto
+    public class MessageCreateDto : MessageDto, IBaseEvent<CrudActionType>, ITenantContext
     {
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public override Guid MessageUID { get; set; }
+        public CrudActionType EventType { get; set; }
     }
 }

@@ -19,9 +19,6 @@ namespace chatservice.Services
 
         public async Task<IEnumerable<ChatDto>> GetAllAsync(PageOptionsDto opts)
         {
-            //    if (!await _context.CanReadBaccountAsync())
-            //        throw new UnauthorizedAccessException();
-
             return await _repository.GetAllAsync(opts);
         }
 
@@ -31,9 +28,6 @@ namespace chatservice.Services
             {
                 throw new ArgumentNullException(nameof(entity));
             }
-
-            //if (!await _context.CanCreateBaccountAsync())
-            //    throw new UnauthorizedAccessException();
 
             entity.ChatUID = Guid.NewGuid();
             entity.TenantUID = _tenantResolver.GetTenantUID();
@@ -49,9 +43,6 @@ namespace chatservice.Services
                 throw new ArgumentNullException(nameof(entity));
             }
 
-            //if (!await _context.CanEditBaccountAsync())
-            //    throw new UnauthorizedAccessException();
-
             var old = await _repository.GetByIdAsync(entity.ChatUID);
             if (old != null)
             {
@@ -65,17 +56,11 @@ namespace chatservice.Services
 
         public async Task<ChatDto> GetByIdAsync(Guid id)
         {
-            //if (!await _context.CanReadBaccountAsync())
-            //    throw new UnauthorizedAccessException();
-
             return await _repository.GetByIdAsync(id);
         }
 
         public async Task<bool> DeleteAsync(Guid id)
         {
-            //if (!await _context.CanEditBaccountAsync())
-            //    throw new UnauthorizedAccessException();
-
             var old = await _repository.GetByIdAsync(id);
             if (old != null)
             {

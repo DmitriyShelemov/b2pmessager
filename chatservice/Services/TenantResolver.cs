@@ -14,7 +14,6 @@ namespace chatservice.Services
 
         private Guid TenantUID { get; set; }
 
-
         public Guid GetTenantUID() => TenantUID;
 
         public void SetTenantUID(Guid uid)

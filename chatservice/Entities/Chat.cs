@@ -10,7 +10,7 @@ namespace chatservice.Entities
         [Key, Identity]
         public int ChatID { get; set; }
 
-        public virtual Guid ChatUID { get; set; }
+        public Guid ChatUID { get; set; }
 
         public Guid TenantUID { get; set; }
 

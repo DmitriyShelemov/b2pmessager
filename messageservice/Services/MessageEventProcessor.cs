@@ -2,30 +2,27 @@
 using queuemessagelibrary.MessageBus;
 using queuemessagelibrary.MessageBus.Interfaces;
 using System.Text.Json;
-using chatservice.Dto;
-using chatservice.Services.Interfaces;
+using messageservice.Dto;
+using messageservice.Services.Interfaces;
 
-namespace chatservice.Services
+namespace messageservice.Services
 {
-    public class ChatEventProcessor : IEventProcessor<BaseEvent<CrudActionType>>
+    public class MessageEventProcessor : IEventProcessor<BaseEvent<CrudActionType>>
     {
-        private readonly IChatService _service;
-        private readonly IValidator<ChatCreateDto> _validator;
+        private readonly IMessageService _service;
+        private readonly IValidator<MessageCreateDto> _validator;
         private readonly IValidator<GuidDto> _guidValidator;
         private readonly IValidator<PageOptionsDto> _pagingValidator;
-        private readonly IMessagePublisher<ChatDto> _publisher;
         private readonly ITenantResolver _tenantResolver;
 
-        public ChatEventProcessor(
-            IChatService service,
-            IMessagePublisher<ChatDto> publisher,
-            IValidator<ChatCreateDto> validator,
+        public MessageEventProcessor(
+            IMessageService service,
+            IValidator<MessageCreateDto> validator,
             IValidator<GuidDto> guidValidator,
             IValidator<PageOptionsDto> pagingValidator,
             ITenantResolver tenantResolver)
         {
             _service = service;
-            _publisher = publisher;
             _validator = validator;
             _guidValidator = guidValidator;
             _pagingValidator = pagingValidator;
@@ -39,13 +36,14 @@ namespace chatservice.Services
             if (src == null)
                 throw new ArgumentNullException(nameof(src));
 
-            
+
             Console.WriteLine("Message came " + src);
 
             switch (message.EventType)
             {
                 case CrudActionType.Get:
-                    return await CallService<GuidDto>(src, async (m) => {
+                    return await CallService<GuidDto>(src, async (m) =>
+                    {
 
                         var result = await _guidValidator.ValidateAsync(m);
                         if (!result.IsValid)
@@ -54,10 +52,11 @@ namespace chatservice.Services
                             //return BadRequest(result.Errors.Select(x => x.ErrorMessage).ToArray());
                         }
 
-                        return await _service.GetByIdAsync(m.Id); 
+                        return await _service.GetByIdAsync(m.Id);
                     });
                 case CrudActionType.Gets:
-                    return await CallService<PageOptionsDto>(src, async (m) => {
+                    return await CallService<PageOptionsDto>(src, async (m) =>
+                    {
 
                         var result = await _pagingValidator.ValidateAsync(m);
                         if (!result.IsValid)
@@ -66,10 +65,10 @@ namespace chatservice.Services
                             //return BadRequest(result.Errors.Select(x => x.ErrorMessage).ToArray());
                         }
 
-                        return await _service.GetAllAsync(m); 
+                        return await _service.GetAllAsync(m.ParentUID, m);
                     });
                 case CrudActionType.Create:
-                    return await CallService<ChatCreateDto>(src, async (m) =>
+                    return await CallService<MessageCreateDto>(src, async (m) =>
                     {
 
                         var result = await _validator.ValidateAsync(m);
@@ -82,13 +81,12 @@ namespace chatservice.Services
                         var done = await _service.AddAsync(m);
                         if (done)
                         {
-                            var created = new ChatDto
+                            var created = new MessageDto
                             {
-                                Name = m.Name,
+                                MessageUID = m.MessageUID,
                                 ChatUID = m.ChatUID,
                                 TenantUID = m.TenantUID,
                             };
-                            _publisher.Publish(created);
 
                             return created;
                         }
@@ -98,7 +96,7 @@ namespace chatservice.Services
                         }
                     });
                 case CrudActionType.Update:
-                    return await CallService<ChatCreateDto>(src, async (m) =>
+                    return await CallService<MessageCreateDto>(src, async (m) =>
                     {
                         var result = await _validator.ValidateAsync(m);
                         if (!result.IsValid)
@@ -121,20 +119,6 @@ namespace chatservice.Services
                         }
 
                         var done = await _service.DeleteAsync(m.Id);
-                        if (done)
-                        {
-                            _publisher.Publish(new ChatDto
-                            {
-                                ChatUID = m.Id,
-                                TenantUID = m.TenantUID,
-                                Deleted = done
-                            });
-                        }
-                        else
-                        {
-
-                        }
-
                         return new BoolDto { Done = done };
                     });
                 default:
@@ -154,7 +138,7 @@ namespace chatservice.Services
                 throw new ArgumentNullException(nameof(getRequest));
 
             _tenantResolver.SetTenantUID(getRequest.TenantUID);
-            
+
             Console.WriteLine("Message in proc " + JsonSerializer.Serialize(getRequest));
 
             var getResponse = await act(getRequest);
