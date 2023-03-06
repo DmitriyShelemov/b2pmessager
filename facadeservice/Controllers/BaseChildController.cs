@@ -69,7 +69,7 @@ namespace facadeservice.Controllers
             return base.CreatedAtAction(nameof(Get), new
             {
                 id = GetUID(entity).ToString("D"),
-                teamId = GetTenantUID(entity).ToString("D")
+                tenantUID = GetTenantUID(entity).ToString("D")
             }, entity);
         }
 

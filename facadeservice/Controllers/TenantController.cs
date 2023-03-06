@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace facadeservice.Controllers
 {
-    [Route("[controller]")]
+    [Route("/api/[controller]")]
     [ApiController]
     public class TenantController : ControllerBase
     {

@@ -5,11 +5,11 @@ namespace facadeservice.Services
 {
     public class MessageService : IMessageService
     {
-        private readonly IRpcClient<ChatDto> _rpcClient;
+        private readonly IRpcClient<MessageDto> _rpcClient;
         private readonly ITenantResolver _tenantResolver;
 
         public MessageService(
-            ITenantResolver tenantResolver, IRpcClient<ChatDto> rpcClient)
+            ITenantResolver tenantResolver, IRpcClient<MessageDto> rpcClient)
         {
             _tenantResolver = tenantResolver;
             _rpcClient = rpcClient;

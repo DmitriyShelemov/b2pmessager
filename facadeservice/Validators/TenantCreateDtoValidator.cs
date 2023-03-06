@@ -12,6 +12,7 @@ namespace facadeservice.Validators
                 .MaximumLength(100);
 
             RuleFor(x => x.Email)
+                .MinimumLength(1)
                 .EmailAddress();
         }
     }

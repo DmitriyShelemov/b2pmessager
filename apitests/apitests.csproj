@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\facadeservice\Dto\ChatCreateDto.cs" Link="Dto\ChatCreateDto.cs" />
+    <Compile Include="..\facadeservice\Dto\ChatDto.cs" Link="Dto\ChatDto.cs" />
+    <Compile Include="..\facadeservice\Dto\CrudActionType.cs" Link="Dto\CrudActionType.cs" />
+    <Compile Include="..\facadeservice\Dto\MessageCreateDto.cs" Link="Dto\MessageCreateDto.cs" />
+    <Compile Include="..\facadeservice\Dto\MessageDto.cs" Link="Dto\MessageDto.cs" />
+    <Compile Include="..\facadeservice\Dto\MessageUpdateDto.cs" Link="Dto\MessageUpdateDto.cs" />
+    <Compile Include="..\facadeservice\Dto\TenantCreateDto.cs" Link="Dto\TenantCreateDto.cs" />
+    <Compile Include="..\facadeservice\Dto\TenantDto.cs" Link="Dto\TenantDto.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoCompare.Core" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0-preview.1.23110.8" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0-preview.1.23110.8" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.4.2" />
+    <PackageReference Include="NUnit.Analyzers" Version="3.6.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector" Version="3.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="queuemessagelibrary" Version="1.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Dto\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
