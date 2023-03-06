@@ -15,7 +15,7 @@ namespace tenantservice.Services
 
         public async Task<IEnumerable<TenantDto>> GetAllAsync(PageOptionsDto opts)
         {
-            return (await FindAllAsync(x => !x.Deleted)).ToArray();
+            return (await SetLimit(opts.Take, opts.Skip).FindAllAsync(x => !x.Deleted)).ToArray();
         }
 
         public async Task<bool> AddAsync(TenantDto entity)

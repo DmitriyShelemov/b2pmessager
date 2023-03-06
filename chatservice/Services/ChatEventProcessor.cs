@@ -39,6 +39,9 @@ namespace chatservice.Services
             if (src == null)
                 throw new ArgumentNullException(nameof(src));
 
+            
+            Console.WriteLine("Message came " + src);
+
             switch (message.EventType)
             {
                 case CrudActionType.Get:
@@ -149,6 +152,8 @@ namespace chatservice.Services
                 throw new ArgumentNullException(nameof(getRequest));
 
             _tenantResolver.SetTenantUID(getRequest.TenantUID);
+            
+            Console.WriteLine("Message in proc " + JsonSerializer.Serialize(getRequest));
 
             var getResponse = await act(getRequest);
             return JsonSerializer.Serialize(getResponse);

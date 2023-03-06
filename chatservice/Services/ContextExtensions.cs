@@ -12,6 +12,11 @@ namespace chatservice.Services
             if (conn == null)
                 return;
 
+            if (conn.State!= ConnectionState.Open)
+            {
+                conn.Open();
+            }
+
             conn.Execute(Sql, new { tenantUID });
         }
     }

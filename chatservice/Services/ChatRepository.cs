@@ -15,7 +15,7 @@ namespace chatservice.Services
 
         public async Task<IEnumerable<ChatDto>> GetAllAsync(PageOptionsDto opts)
         {
-            return (await FindAllAsync(x => !x.Deleted)).ToArray();
+            return (await SetLimit(opts.Take, opts.Skip).FindAllAsync(x => !x.Deleted)).ToArray();
         }
 
         public async Task<bool> AddAsync(ChatDto entity)

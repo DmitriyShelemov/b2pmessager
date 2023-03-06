@@ -1,5 +1,6 @@
 ﻿using chatservice.Dto;
 using chatservice.Services.Interfaces;
+using System.Text.Json;
 
 namespace chatservice.Services
 {
@@ -36,6 +37,8 @@ namespace chatservice.Services
 
             entity.ChatUID = Guid.NewGuid();
             entity.TenantUID = _tenantResolver.GetTenantUID();
+            
+            Console.WriteLine("Message before add " + JsonSerializer.Serialize(entity));
             return await _repository.AddAsync(entity);
         }
 

@@ -29,6 +29,7 @@ docker build -t dmitriyshv/facadeservice .
 docker push dmitriyshv/facadeservice
 ((Get-Content -path DockerFile -Raw) -replace $BagetIp,'BagetIp') | Set-Content -Path DockerFile
 
+cd ../k8s
 kubectl apply -f tenant-np-srv.yaml
 kubectl apply -f tenant-depl.yaml
 kubectl apply -f chat-np-srv.yaml
@@ -37,3 +38,4 @@ kubectl apply -f message-np-srv.yaml
 kubectl apply -f message-depl.yaml
 kubectl apply -f facade-np-srv.yaml
 kubectl apply -f facade-depl.yaml
+cd ../
