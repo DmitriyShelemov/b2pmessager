@@ -23,8 +23,8 @@ builder.Services.AddTransient<IChatService, ChatService>();
 builder.Services.AddTransient<IMessageService, MessageService>();
 builder.Services.AddSingleton<IRpcClient<TenantDto>, TenantRpcClient>();
 builder.Services.AddSingleton<IRpcClient<ChatDto>, ChatRpcClient>();
+builder.Services.AddSingleton<IRpcClient<MessageDto>, ChatMessageRpcClient>();
 builder.Services.AddSingleton<IMessageConnection, MessageConnection>();
-builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -5,15 +5,14 @@ namespace facadeservice.Services
 {
     public class MessageService : IMessageService
     {
-        private readonly IGenericRepository<MessageDto> _repository;
+        private readonly IRpcClient<ChatDto> _rpcClient;
         private readonly ITenantResolver _tenantResolver;
 
         public MessageService(
-            IGenericRepository<MessageDto> repository,
-            ITenantResolver tenantResolver)
+            ITenantResolver tenantResolver, IRpcClient<ChatDto> rpcClient)
         {
-            _repository = repository;
             _tenantResolver = tenantResolver;
+            _rpcClient = rpcClient;
         }
 
         public async Task<IEnumerable<MessageDto>> GetAllAsync(Guid parentId, PageOptionsDto opts)
@@ -21,7 +20,10 @@ namespace facadeservice.Services
             //    if (!await _context.CanReadBaccountAsync())
             //        throw new UnauthorizedAccessException();
 
-            return await _repository.GetAllAsync(parentId, opts);
+            opts.TenantUID = _tenantResolver.GetTenantUID();
+            opts.ParentUID = parentId;
+            opts.EventType = CrudActionType.Gets;
+            return await _rpcClient.RequestAsync<PageOptionsDto, IEnumerable<MessageDto>>(opts) ?? Enumerable.Empty<MessageDto>();
         }
 
         public async Task<bool> AddAsync(MessageCreateDto entity)
@@ -34,9 +36,14 @@ namespace facadeservice.Services
             //if (!await _context.CanCreateBaccountAsync())
             //    throw new UnauthorizedAccessException();
 
-            entity.MessageUID = Guid.NewGuid();
             entity.TenantUID = _tenantResolver.GetTenantUID();
-            return await _repository.AddAsync(entity);
+            entity.EventType = CrudActionType.Create;
+            var created = await _rpcClient.RequestAsync<MessageCreateDto, MessageDto>(entity);
+            if (created == null)
+                return false;
+
+            entity.MessageUID = created.MessageUID;
+            return true;
         }
 
         public async Task<bool> UpdateAsync(MessageUpdateDto entity)
@@ -49,15 +56,10 @@ namespace facadeservice.Services
             //if (!await _context.CanEditBaccountAsync())
             //    throw new UnauthorizedAccessException();
 
-            var old = await _repository.GetByIdAsync(entity.MessageUID);
-            if (old != null)
-            {
-                old.MessageText = entity.MessageText;
-
-                return await _repository.UpdateAsync(old);
-            }
-
-            return false;
+            entity.TenantUID = _tenantResolver.GetTenantUID();
+            entity.EventType = CrudActionType.Update;
+            var updated = await _rpcClient.RequestAsync<MessageUpdateDto, BoolDto>(entity);
+            return updated?.Done ?? false;
         }
 
         public async Task<MessageDto?> GetByIdAsync(Guid id)
@@ -65,7 +67,14 @@ namespace facadeservice.Services
             //if (!await _context.CanReadBaccountAsync())
             //    throw new UnauthorizedAccessException();
 
-            return await _repository.GetByIdAsync(id);
+            var guidDto = new GuidDto
+            {
+                Id = id,
+                EventType = CrudActionType.Get,
+                TenantUID = _tenantResolver.GetTenantUID()
+            };
+
+            return await _rpcClient.RequestAsync<GuidDto, MessageDto>(guidDto);
         }
 
         public async Task<bool> DeleteAsync(Guid id)
@@ -73,14 +82,14 @@ namespace facadeservice.Services
             //if (!await _context.CanEditBaccountAsync())
             //    throw new UnauthorizedAccessException();
 
-            var old = await _repository.GetByIdAsync(id);
-            if (old != null)
+            var guidDto = new GuidDto
             {
-                old.Deleted = true;
-                return await _repository.UpdateAsync(old);
-            }
-
-            return false;
+                Id = id,
+                EventType = CrudActionType.Delete,
+                TenantUID = _tenantResolver.GetTenantUID()
+            };
+            var deleted = await _rpcClient.RequestAsync<GuidDto, BoolDto>(guidDto);
+            return deleted?.Done ?? false;
         }
 
         public Task<IEnumerable<MessageDto>> GetAllAsync(PageOptionsDto opts)
