@@ -1,4 +1,5 @@
-import React, { FC, useCallback, useMemo } from 'react'
+import * as React from "react"
+import { FC, useCallback, useEffect, useState } from 'react'
 import isHotkey from 'is-hotkey'
 import { cx, css } from '@emotion/css'
 import { Editable, withReact, useSlate, Slate, ReactEditor } from 'slate-react'
@@ -53,11 +54,28 @@ const HOTKEYS: IHOTKEYS = {
 const LIST_TYPES = ['numbered-list', 'bulleted-list']
 const TEXT_ALIGN_TYPES = ['left', 'center', 'right', 'justify']
 
-const RteEditor: FC<{ readonly?: boolean | undefined, value: Descendant[], onChange?: ((value: Descendant[]) => void) | undefined }> 
-  = ({ readonly, value, onChange }) => {
+const RteEditor: FC<{ readonly?: boolean | undefined, value: Descendant[], resetCounter?: number | undefined, onChange?: ((value: Descendant[]) => void) | undefined }> 
+  = ({ readonly, value, resetCounter, onChange }) => {
   const renderElement = useCallback<any>((props: any) => <Element {...props} />, [])
   const renderLeaf = useCallback<any>((props: any) => <Leaf {...props} />, [])
-  const editor = useMemo(() => withHistory(withReact(createEditor())), [])
+  const [editor] = useState(() => withHistory(withReact(createEditor())))
+  useEffect(() => {
+    if (resetCounter && resetCounter > 0) {
+      while (editor.children.length > 0) {
+        Transforms.removeNodes(
+          editor,
+          { at: [0] })
+      }
+
+      Transforms.insertNodes(
+        editor,
+        value,
+        { at: [editor.children.length] }
+      )
+    }
+  }, [resetCounter])
+
+  console.log(`resetCounter:${resetCounter} and value ${JSON.stringify(value)}`);
   return (
     <Slate 
       editor={editor} 
@@ -89,8 +107,8 @@ const RteEditor: FC<{ readonly?: boolean | undefined, value: Descendant[], onCha
       </Toolbar>)}
       <Editable
         className={cx(
-          'bg-zinc-300 rounded-bl-xl rounded-br-xl',
-          css`padding: 0.5rem;`)}
+          'bg-zinc-300 rounded-bl-xl rounded-br-xl max-h-40 overflow-hidden hover:overflow-y-auto',
+          css`padding: 0.5rem; word-break: break-all;`)}
         readOnly={readonly ?? false}
         renderElement={renderElement}
         renderLeaf={renderLeaf}

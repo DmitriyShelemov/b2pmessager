@@ -29,6 +29,18 @@ docker build -t dmitriyshv/facadeservice .
 docker push dmitriyshv/facadeservice
 ((Get-Content -path DockerFile -Raw) -replace $BagetIp,'BagetIp') | Set-Content -Path DockerFile
 
+cd ../emailservice
+((Get-Content -path DockerFile -Raw) -replace 'BagetIp',$BagetIp) | Set-Content -Path DockerFile
+docker build -t dmitriyshv/emailservice .
+docker push dmitriyshv/emailservice
+((Get-Content -path DockerFile -Raw) -replace $BagetIp,'BagetIp') | Set-Content -Path DockerFile
+
+cd ../userservice
+((Get-Content -path DockerFile -Raw) -replace 'BagetIp',$BagetIp) | Set-Content -Path DockerFile
+docker build -t dmitriyshv/userservice .
+docker push dmitriyshv/userservice
+((Get-Content -path DockerFile -Raw) -replace $BagetIp,'BagetIp') | Set-Content -Path DockerFile
+
 cd ../k8s
 kubectl apply -f tenant-np-srv.yaml
 kubectl apply -f tenant-depl.yaml
@@ -38,4 +50,8 @@ kubectl apply -f message-np-srv.yaml
 kubectl apply -f message-depl.yaml
 kubectl apply -f facade-np-srv.yaml
 kubectl apply -f facade-depl.yaml
+kubectl apply -f email-np-srv.yaml
+kubectl apply -f email-depl.yaml
+kubectl apply -f user-np-srv.yaml
+kubectl apply -f user-depl.yaml
 cd ../

@@ -17,11 +17,15 @@ builder.Services.AddTransient<IValidator<TenantCreateDto>, TenantCreateDtoValida
 builder.Services.AddTransient<IValidator<ChatCreateDto>, ChatCreateDtoValidator>();
 builder.Services.AddTransient<IValidator<MessageCreateDto>, MessageCreateDtoValidator>();
 builder.Services.AddTransient<IValidator<MessageUpdateDto>, MessageUpdateDtoValidator>();
+builder.Services.AddTransient<IValidator<UserCreateDto>, UserCreateDtoValidator>();
+builder.Services.AddTransient<IValidator<UserUpdateDto>, UserUpdateDtoValidator>();
 builder.Services.AddTransient<ITenantResolver, TenantResolver>();
 builder.Services.AddTransient<ITenantService, TenantService>();
+builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IChatService, ChatService>();
 builder.Services.AddTransient<IMessageService, MessageService>();
 builder.Services.AddSingleton<IRpcClient<TenantDto>, TenantRpcClient>();
+builder.Services.AddSingleton<IRpcClient<UserDto>, UserRpcClient>();
 builder.Services.AddSingleton<IRpcClient<ChatDto>, ChatRpcClient>();
 builder.Services.AddSingleton<IRpcClient<MessageDto>, ChatMessageRpcClient>();
 builder.Services.AddSingleton<IMessageConnection, MessageConnection>();

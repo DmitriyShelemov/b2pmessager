@@ -67,7 +67,7 @@ namespace facadeservice.Services
             //if (!await _context.CanReadBaccountAsync())
             //    throw new UnauthorizedAccessException();
 
-            var guidDto = new GuidDto
+            var guidDto = new GuidWithTenantDto
             {
                 Id = id,
                 EventType = CrudActionType.Get,
@@ -82,7 +82,7 @@ namespace facadeservice.Services
             //if (!await _context.CanEditBaccountAsync())
             //    throw new UnauthorizedAccessException();
 
-            var guidDto = new GuidDto
+            var guidDto = new GuidWithTenantDto
             {
                 Id = id,
                 EventType = CrudActionType.Delete,

@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "demoaustralia-58906",
+  "private_key_id": "ba09fbd67bfc252740a7e5929c4b9c0f1fb29617",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDs+KTSSVgNOWjH\nklLH+7wnjX/BkIfp3x8srkPOz1rpvu87lFrtMyPFvRfHiP86E2t/N9aUf71UI2yc\nk6BPzYbSRffDbJEimac4zscGXlVobUN2m/PLFNvDo7JSCbtlkz0HG4/LVS9ML4gV\ngPUA3G9Ia1aBD0pbwMnyPiO/g668xcPt/LUHwvIqBFFfCQCs69mOsg/vg2KQmYxj\n7HTbnu/mZrvsksQ6XdvnxyhDMOVs194E/bMsl/eDt29R0CHZ86CGHzQfOaskse2Z\n4wI6a/VFOdKqSk4XJL6k2Igba+4cxnn/wC50w3qdxEy3PAZS+YSuYW7kE0yK15dz\nyOxzX/EPAgMBAAECggEAJwX529NOLRH+KkHzYJFuS7PRN7v9qyAeJHUndMrQIDFc\nI3CWhKc+RdWSMT64i691Aq8xpqSz4JjbeEbAne5XkbsJ8Q7+MOIiwofICJ7HlnnK\neUwh7+3QaZLvI563UyPVvJznp3FbZ5gQOJJS8RWxPGNzYa917E7UMrsplzkv26VY\niM1ubmaIAumQZfj+N125MrI3V3v10nHWTx+XDCAHjkq1LWvHdEyPjl64wZpzxTms\nvwoF16HIVUNNfd54rR9NjserkRJVL7+AGnFDhexJedvvCv44r5O03wL2XDWjvVA/\n6Zcd+oIYvrwFA6QvtQmQm7z0UwEWeOwCbXgmKJXaoQKBgQD38dXfOd8f+ge8RVOK\np5xYcZMu1ZZUjlACUqcIScutzZWuTvEOgtk8Puw7jDp8buEa7gDTi7feGqzjub0x\nWCD9OIg1OqDB4ISi39e1o7kTZfiN08n2bu2h+x+7p22ZbCbqI/r6Wi9tCtSVbBWp\nrQQUQcxMbjDV1ghSYfVpZYFonwKBgQD0q4rNxl8UOxD5h0PFmkDW7sDBWr9AQVg0\nV6T/fldHSsIG5lgVj9NIz/rFPGrSWbxtD+qosygx2WwE0VgagpEI0zXL5mD0yua2\nBB9iJW4FIBDJU6cN1exhskn3qvhEeV7Y0Zn2mvfKub+wFy5pJMk5fPPDJPjUKj0W\nbn0bWKrxkQKBgAUmJ4vgNssCNUDqq6Z4fp2zlhvl4Z5V6kFyF/frGGi+mToqd4UW\noI5IvD0sV1aYMuKNSMUb5LCfGzILfGtW6jB4CRQZ6Ja+I+MCBQfHo6NMfdHsMQiG\nGzc+8NTD0FncTh6UqrSiRNPd4rZLrVN9vVTyXNzFeQwnyrpzQFZ0/i//AoGAbe5d\ncVN+CNL5L4RtGO3T0D558OZbI/24KdxvUDRt9qRKRVtdnGKA5ig8Xj5lKJoVJVOP\ndbj5iFxOQmPlGBQuIi7z7udWDObVflaf2zNCGZ9sq2igmIDTspmuzk7NOcbmrLiQ\nWtMKHtYSoIXp3mge2WuhAr8r5fgMdnWyVIUkWWECgYBiHScnVfv/DtIcoeNZ/xa9\nDtM7b499TEiR/ggkKP+0jvAPyI7ZKYE5r5qy5Ud04cuZnUjQCnlDCDU8DimES2I/\nU8jtEQ/3oTL48aru5Igm7NkAdKCnYSSYjjEZ3cOWIEC3HSn4nt3S0SANeuWrU7Ld\n4ehja02oMGPkaDbKlI6aUQ==\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-cdsgd@demoaustralia-58906.iam.gserviceaccount.com",
+  "client_id": "101772586130661865562",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-cdsgd%40demoaustralia-58906.iam.gserviceaccount.com"
+}

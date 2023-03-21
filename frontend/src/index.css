@@ -2,6 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+::-webkit-scrollbar {
+  width: 0px;
+}
+/* Track */
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: none;
+}
+/* Handle */
+
+::-webkit-scrollbar-thumb {
+  background: white;
+  -webkit-box-shadow: none;
+}
+
+::-webkit-scrollbar-thumb:window-inactive {
+  background: none;
+}
+
 div#root {
   display: flex;
 }

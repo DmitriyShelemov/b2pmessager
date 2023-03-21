@@ -7,6 +7,8 @@
         Gets,
         Create,
         Update,
-        Delete
+        Delete,
+        Signup,
+        Activate
     }
 }

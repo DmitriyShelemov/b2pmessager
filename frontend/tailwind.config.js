@@ -11,12 +11,13 @@ module.exports = {
       black: colors.black,
       white: colors.white,
       gray: colors.stone,
+      stone: colors.stone,
       green: colors.emerald,
       emerald: colors.emerald,
       purple: colors.violet,
       yellow: colors.amber,
       pink: colors.fuchsia,
-      zinc: colors.stone
+      zinc: colors.zinc
     },
   },
   plugins: [],

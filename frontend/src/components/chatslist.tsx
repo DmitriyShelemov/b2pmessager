@@ -20,9 +20,15 @@ const ChatsList: FC = () => {
         }
     }, [tenant])
 
+    React.useEffect(() => {
+        if (data && data.length) {
+            setChat(data[0])
+        }
+    }, [data])
+
     return (
         <nav className='hidden lg:mt-10 lg:block'>
-            <ul role="list" className="mt-4 flex justify-center gap-10 text-base font-medium leading-7 text-slate-700 sm:gap-8 lg:flex-col lg:gap-4">
+            <ul role="list" className="mt-4 flex justify-center gap-10 text-base font-medium leading-7 text-stone-700 sm:gap-8 lg:flex-col lg:gap-4">
                 <li className="flex gap-2">
                     <div className="flex-1">
                         <input
@@ -32,7 +38,7 @@ const ChatsList: FC = () => {
                             autoComplete="off"
                             value={chatName}
                             onChange={(event) => setChatName(event.target.value)}
-                            className="block w-full rounded-md border-0 py-0.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            className="block w-full rounded-md border-0 py-0.5 px-1.5 bg-zinc-600 text-stone-100 shadow-sm ring-1 ring-inset ring-zinc-600 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-zinc-400 focus:outline-none  sm:text-sm sm:leading-6"
                         />
                     </div>
                     <button
@@ -49,7 +55,7 @@ const ChatsList: FC = () => {
                             })
                         }}
                         disabled={chatName === ''}
-                        className="text-zinc-400 disabled:text-zinc-900">
+                        className="text-stone-400 disabled:text-stone-700">
                         <PlusCircleIcon  className="h-7 w-7" />
                     </button>
                 </li>
@@ -58,17 +64,17 @@ const ChatsList: FC = () => {
                 (chatFromList.chatUID !== chat?.chatUID) ?
                 <li 
                 onClick={() => setChat(chatFromList)}
-                className="flex px-2 rounded-xl text-zinc-400 hover:bg-zinc-600 hover:text-zinc-300 cursor-pointer" 
+                className="flex px-2 rounded-xl text-stone-400 hover:bg-zinc-600 hover:text-stone-300 cursor-pointer truncate" 
                 key={chatFromList.chatUID} >
-                    <a className="group flex items-center truncate" aria-label={chatFromList.name}>
+                    <a className="group flex items-center" aria-label={chatFromList.name}>
                         <RectangleGroupIcon className="h-5 w-5" />
                         <span className="hidden sm:ml-3 sm:block">{chatFromList.name}</span>
                     </a>
                 </li> :
                 <li 
-                className="flex px-2 rounded-xl bg-zinc-800 text-zinc-300 cursor-pointer" 
+                className="flex px-2 rounded-xl bg-zinc-800 text-stone-300 cursor-pointer truncate" 
                 key={chatFromList.chatUID} >
-                <a className="group flex items-center truncate" aria-label={chatFromList.name} onClick={() => {}}>
+                <a className="group flex items-center" aria-label={chatFromList.name} onClick={() => {}}>
                     <RectangleGroupIcon className="h-5 w-5" />
                     <span className="hidden sm:ml-3 sm:block">{chatFromList.name}</span>
                 </a>
