@@ -6,21 +6,22 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["tenantservice.csproj", "."]
+COPY ["userservice.csproj", "."]
 
 RUN dotnet nuget add source http://BagetIp:80/v3/index.json -n LocalNuget
 
-RUN dotnet restore "./tenantservice.csproj"
-
+RUN dotnet restore "./userservice.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "tenantservice.csproj" -c Release -o /app/buildcd 
+RUN dotnet build "userservice.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "tenantservice.csproj" -c Release -o /app/publish /p:UseAppHost=false --no-restore
+RUN dotnet publish "userservice.csproj" -c Release -o /app/publish /p:UseAppHost=false --no-restore
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "tenantservice.dll"]
+ENTRYPOINT ["dotnet", "userservice.dll"]
+
+
 
